@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Links this harness into ~/.claude and ~/.config/herdr-app.
-# Existing files are moved to <name>.bak.<timestamp>, never overwritten.
+# Existing files are moved to ~/.claude-harness-backups/<timestamp>/, never overwritten.
+# (Backups live outside ~/.claude so Claude Code never loads a backed-up skill twice.)
 # Usage: ./install.sh [--dry-run]
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")" && pwd)"
 TS="$(date +%Y%m%d%H%M%S)"
+BACKUP="$HOME/.claude-harness-backups/$TS"
 DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
@@ -18,7 +20,9 @@ link() { # link <source in repo> <target>
     echo "ok      $dst"; return
   fi
   if [[ -e "$dst" || -L "$dst" ]]; then
-    run mv "$dst" "$dst.bak.$TS"; echo "backup  $dst -> $dst.bak.$TS"
+    local bak="$BACKUP${dst#$HOME}"
+    run mkdir -p "$(dirname "$bak")"
+    run mv "$dst" "$bak"; echo "backup  $dst -> $bak"
   fi
   run ln -s "$src" "$dst"; echo "link    $dst"
 }

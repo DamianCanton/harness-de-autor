@@ -119,7 +119,7 @@ cd ~/claude-harness
 ./install.sh
 ```
 
-`install.sh` symlinks skills, overrides, hooks, and herdr files, so a `git pull` updates the harness. Anything it replaces is kept as `*.bak.<timestamp>`. It is idempotent.
+`install.sh` symlinks skills, overrides, hooks, and herdr files, so a `git pull` updates the harness. Anything it replaces is moved to `~/.claude-harness-backups/<timestamp>/`. It is idempotent.
 
 > ⚠️ `settings.json` is **copied, not linked**. Claude Code writes machine-specific data into it, and a symlink would leak that into a public repo. If you already have one, merge `claude/settings.example.json` by hand.
 
